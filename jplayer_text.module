@@ -1,0 +1,189 @@
+<?php
+/**
+ * @file
+ * Base module file for jplayer_text
+ *
+ * @defgroup jplayer_text jPlayer Text
+ * @{
+ */
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function jplayer_text_field_formatter_info() {
+  return array(
+    'jplayer_text' => array(
+      'label' => t('jPlayer - Player'),
+      'field types' => array('text'),
+      'description' => t('Display text fields as media urls to an HTML5-compatible with Flash-fallback media player.'),
+      'settings' => array(
+        'autoplay' => 0,
+        'solution' => 'html, flash',
+        'preload' => 'metadata',
+        'volume' => 80,
+        'muted' => FALSE,
+        'repeat' => 'none',
+        'backgroundColor' => '000000',
+        'mode' => 'playlist',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function jplayer_text_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    case 'jplayer_text':
+      if (!empty($items)) {
+
+        // "Trick" jPlayer into thinking we have files
+        foreach (array_keys($items) as $key) {
+          $items[$key]['uri'] = url($items[$key]['value']);
+          $info = pathinfo($items[$key]['uri']);
+          $items[$key]['filename'] = $info['filename'];
+        }
+
+        drupal_alter('jplayer_text_media', &$items, $entity, $field);
+
+        $output = theme(
+          'jplayer',
+          array(
+            'entity_type' => $entity_type,
+            'entity' => $entity,
+            'field_name' => $instance['field_name'],
+            'items' => $items,
+            'settings' => $display['settings'],
+          )
+        );
+      }
+      else {
+        return array();
+      }
+      $element[0] = array(
+        '#markup' => $output,
+      );
+      break;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function jplayer_text_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $form = array();
+
+  if ($display['type'] == 'jplayer_text') {
+    $form['mode'] = array(
+      '#title' => t('Kind'),
+      '#type' => 'select',
+      '#options' => array(
+        'single' => t('Single'),
+        'playlist' => t('Playlist'),
+      ),
+      '#default_value' => $settings['mode'],
+    );
+
+    $form['autoplay'] = array(
+      '#title' => t('Autoplay'),
+      '#type' => 'select',
+      '#options' => array(
+        0 => t('No'),
+        1 => t('Yes'),
+      ),
+      '#default_value' => $settings['autoplay'],
+    );
+
+    $form['solution'] = array(
+      '#title' => t('Preferred solution'),
+      '#type' => 'select',
+      '#options' => array(
+        'html, flash' => t('HTML5'),
+        'flash, html' => t('Flash'),
+      ),
+      '#default_value' => $settings['solution'],
+    );
+
+    $form['preload'] = array(
+      '#title' => t('Preload media'),
+      '#type' => 'select',
+      '#options' => array(
+        'metadata' => t('No'),
+        'auto' => t('Yes'),
+      ),
+      '#description' => t("Preloading media before it's requested isn't available in all browsers."),
+      '#default_value' => $settings['preload'],
+    );
+
+    $form['volume'] = array(
+      '#title' => t('Initial volume'),
+      '#type' => 'textfield',
+      '#field_suffix' => '%',
+      '#maxlength' => 3,
+      '#size' => 3,
+      '#default_value' => $settings['volume'],
+      '#element_validate' => array('jplayer_volume_check'),
+    );
+
+    $form['muted'] = array(
+      '#title' => t('Initially muted'),
+      '#type' => 'select',
+      '#options' => array(
+        FALSE => t('No'),
+        TRUE => t('Yes'),
+      ),
+      '#default_value' => $settings['muted'],
+    );
+
+    $form['repeat'] = array(
+      '#title' => t('Repeat'),
+      '#type' => 'select',
+      '#options' => array(
+        'all' => t('All'),
+        'single' => t('Single'),
+        'none' => t('None'),
+      ),
+      '#default_value' => $settings['repeat'],
+    );
+
+    $form['backgroundColor'] = array(
+      '#title' => t('Background color'),
+      '#type' => 'textfield',
+      '#field_preffix' => '#',
+      '#maxlength' => 6,
+      '#size' => 6,
+      '#default_value' => $settings['backgroundColor'],
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function jplayer_text_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $summary = '';
+
+  if ($display['type'] == 'jplayer_text') {
+    if (isset($settings['autoplay']) && $settings['autoplay'] == 1) {
+      $summary = t('Single jPlayer instance which autoplays.');
+    }
+    else {
+      $summary = t('Single jPlayer instance.');
+    }
+  }
+
+  return $summary;
+}
