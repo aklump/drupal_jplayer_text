@@ -1,5 +1,5 @@
 name = jPlayer Text
-description = Adds a jPlayer field formatter for text fields.
+description = Extend the Drupal jPlayer module's formatters to allow text fields as media urls.
 package = Media
 version = 7.x-1.0-rc2
 core = 7.x

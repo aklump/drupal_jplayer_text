@@ -1,10 +1,10 @@
 ##Summary
-Addes the ability to format text fields as urls in a jPlayer. By default the
-textfield is passed to the url() function and considered a filepath. Advanced
-manipulation can be achieved through an api hook:
-hook_jplayer_text_media_alter().
+Extend the Drupal jPlayer module's formatters to allow text fields as media urls.  By default the textfield is passed to the url() function and considered a filepath. Advanced manipulation can be achieved through an api hook:
+
+    hook_jplayer_text_media_alter().
 
 ##Requirements
+Requires the Drupal [jPlayer module](http://drupal.org/project/jplayer)
 
 
 ##Installation
@@ -16,13 +16,11 @@ hook_jplayer_text_media_alter().
 1. Select any text field and choose jPlayer - Player as the formatter.
 
 
-##API
-hook_jplayer_text_media_alter()
-
 ##Contact
-**In the Loft Studios**
-Aaron Klump - Developer
-PO Box 29294 Bellingham, WA 98228-1294
-aim: theloft101
-skype: intheloftstudios
-<http://www.InTheLoftStudios.com>
+* **In the Loft Studios**
+* Aaron Klump - Developer
+* PO Box 29294 Bellingham, WA 98228-1294
+* _aim_: theloft101
+* _skype_: intheloftstudios
+* _d.o_: aklump
+* <http://www.InTheLoftStudios.com>
