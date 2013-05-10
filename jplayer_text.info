@@ -1,7 +1,7 @@
 name = jPlayer Text
 description = Adds a jPlayer field formatter for text fields.
 package = Media
-version = 7.x-0.1
+version = 7.x-1.0-rc2
 core = 7.x
 
 dependencies[] = jplayer
