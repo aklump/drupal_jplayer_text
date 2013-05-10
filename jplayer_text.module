@@ -47,7 +47,7 @@ function jplayer_text_field_formatter_view($entity_type, $entity, $field, $insta
           $items[$key]['filename'] = $info['filename'];
         }
 
-        drupal_alter('jplayer_text_media', &$items, $entity, $field);
+        drupal_alter('jplayer_text_media', $items, $entity, $field);
 
         $output = theme(
           'jplayer',
